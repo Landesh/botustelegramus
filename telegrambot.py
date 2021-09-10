@@ -5,8 +5,7 @@ from datetime import datetime
 
 #секс бот
 key = open('key.txt')
-print(key.read())
-bot = telebot.TeleBot('1996353008:AAFbmEF5glHEtp2VeBsb_kGhm7RwfU80CFM')
+bot = telebot.TeleBot(key.read)
 
 global_group_type = ''
 
