@@ -1,18 +1,30 @@
 import telebot
 import xlrd
-import os
 from telebot.types import KeyboardButton, Message, ReplyKeyboardMarkup
 from datetime import datetime
 
 #секс бот
-key = open('key')
-bot = telebot.TeleBot(key.read)
+key = open('key.txt')
+print(key.read())
+bot = telebot.TeleBot('1996353008:AAFbmEF5glHEtp2VeBsb_kGhm7RwfU80CFM')
 
-#определения
+global_group_type = ''
+
+#Клавиатуры
+#первый выбор
 button_texnik = KeyboardButton('Техник')
 button_universal = KeyboardButton('Универсал')
 button_estev = KeyboardButton('Естесвенно-научник')
-chosee_kb = ReplyKeyboardMarkup(resize_keyboard=True,one_time_keyboard=True).add(button_texnik,button_universal,button_estev)
+choose = ReplyKeyboardMarkup(resize_keyboard=True,one_time_keyboard=True).add(button_texnik,button_universal,button_estev)
+
+#меню
+
+button_choosegroup = KeyboardButton('Поменять группу')
+button_raspisanie = KeyboardButton('Получить расписание')
+button_danek = KeyboardButton('Анекдот')
+button_aboutus = KeyboardButton('О нас')
+menu = ReplyKeyboardMarkup(resize_keyboard=True,one_time_keyboard=True).add(button_choosegroup).add(button_raspisanie).add(button_danek,button_aboutus)
+
 
 def print_raspisanie(group_type, today):
     raspisanie = ''
@@ -24,33 +36,47 @@ def print_raspisanie(group_type, today):
     return raspisanie
 
 
-@bot.message_handler(commands=['start'])
+@bot.message_handler(commands=['start', 'help'])
 def start_message(Message):
-    bot.send_message(Message.chat.id, 'Добро пожаловать в бота c расписанием! \nСначала будьте добры указать свою группу.', reply_markup=chosee_kb)
+    bot.send_message(Message.chat.id, 'Добро пожаловать в бота c расписанием! \nСначала будьте добры указать свою группу.', reply_markup=menu)
 
 @bot.message_handler(content_types=['text'])
-def groupchose(Message):
+def menuchoose(Message):
+    text = Message.text
     date = datetime.fromtimestamp(Message.date)
     today = date.weekday()
-    text = Message.text
-    if text =='Техник':
-        group_type = 0
-        answer = 'Вау... 🥵'
+    global global_group_type 
+
+    if text =='Поменять группу':
+        bot.send_message(Message.chat.id, 'Выбирай.',reply_markup=choose)
+
+    elif text =='Техник':
+        global_group_type = 0
+        bot.send_message(Message.chat.id, 'Вау... 🥵',reply_markup=menu)
+
     elif text == 'Универсал':
-        group_type = 1
-        answer = 'Ясно... 🤢'
+        global_group_type = 1
+        bot.send_message(Message.chat.id, 'Ясно... 🤢',reply_markup=menu)
+
     elif text == 'Естесвенно-научник':
-        group_type = 2
-        answer = 'Ясно... 🤮'
+        global_group_type = 2
+        bot.send_message(Message.chat.id, 'Ясно... 🤮',reply_markup=menu)
 
-    bot.send_message(Message.chat.id, answer)
+    elif text == 'Получить расписание':
+        if type(global_group_type) == int:
+            answer = str(date.date()) + '\n========================= \n' + print_raspisanie(global_group_type,today)
+            bot.send_message(Message.chat.id, answer, reply_markup=menu)
 
-    bot.send_message(Message.chat.id, 'Ладно, вот твоё расписание.')
+        else:
+            bot.send_message(Message.chat.id, 'группу то сначала выбери!!!', reply_markup=choose)
 
-    answer = str(date.date()) + '\n========================= \n' + print_raspisanie(group_type,today)
+    elif text == 'Анекдот':
+        bot.send_message(Message.chat.id, 'не работает сказал же', reply_markup=menu)
+    elif text == 'О нас':
+        bot.send_message(Message.chat.id, 'Идейный вдохновитель: виталька!!! \nЧел который все реализовал: руслан!!!\n Отдельное спасибо всем за идеи и усовершенстования ❤️ \nЕсли есть идеи или даже функциональные решения, прошу писать мне лично или выложить решение на гитхаб: https://github.com/Landesh/botustelegramus', reply_markup=menu)
 
-    bot.send_message(Message.chat.id, answer)
-
+    else:
+        bot.send_message(Message.chat.id, 'нихуя не понятно', reply_markup=menu)
 
 
 bot.polling(none_stop = True)
