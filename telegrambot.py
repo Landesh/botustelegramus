@@ -5,7 +5,7 @@ import random
 from telebot.types import KeyboardButton, Message, ReplyKeyboardMarkup
 import datetime
 
-#секс бот
+#Бот
 key = open('key')
 bot = telebot.TeleBot(key.read())
 book = xlrd.open_workbook_xls('raspisanie.xls')
@@ -107,9 +107,8 @@ def menuchoose(Message):
             bot.send_message(Message.chat.id, 'группу то сначала выбери!!!', reply_markup=choose)
 
     elif text == 'Анекдот':
-        anekdot = open("anekdot")
-
         bot.send_message(Message.chat.id, getanekdot(), reply_markup=menu)
+
     elif text == 'О нас':
         bot.send_message(Message.chat.id, 'Идейный вдохновитель: Виталя \nРеализация: Руслан\n Отдельное спасибо всем за идеи и усовершенстования ❤️ \nЕсли есть идеи или даже функциональные решения. \nПрошу писать мне лично или выложить решение на гитхаб: https://github.com/Landesh/botustelegramus', reply_markup=menu)
 
