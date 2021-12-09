@@ -46,7 +46,7 @@ def mainraspisanie(group_type, today):
     else:
         weekday = today.weekday() + 1
 
-    if weekday == 6 or 5: # Если выходные
+    if (weekday == 6) or (weekday == 5): # Если выходные
         weekday = 0
 
     raspisanie += str(days[weekday])
